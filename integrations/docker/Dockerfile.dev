@@ -1,0 +1,40 @@
+# BNVD – Dockerfile DEV com Poetry
+FROM python:3.11-slim
+
+# Variáveis de ambiente
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+ENV POETRY_VIRTUALENVS_CREATE=false
+ENV POETRY_NO_INTERACTION=1
+
+WORKDIR /app
+
+# Dependências de sistema (Python + PostgreSQL)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git \
+    curl \
+    build-essential \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# 1️⃣ Instalar Poetry
+RUN pip install --no-cache-dir poetry
+
+# 2️⃣ Clonar o repositório
+RUN git clone https://github.com/azurejoga/bnvd .
+
+# 3️⃣ Instalar dependências do projeto (backend / libs)
+RUN poetry install --no-root
+
+# 4️⃣ Instalar a CLI corretamente (editable mode)
+WORKDIR /app/cli
+RUN pip install -e .
+
+# Voltar para o diretório raiz do app
+WORKDIR /app
+
+# Porta da aplicação
+EXPOSE 4448
+
+# 5️⃣ Subir aplicação com Gunicorn
+CMD ["gunicorn", "--bind", "0.0.0.0:4448", "--workers", "1", "main:app"]

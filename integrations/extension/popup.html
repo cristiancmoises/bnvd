@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BNVD</title>
+  <link rel="stylesheet" href="css/popup.css">
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1>BNVD</h1>
+      <p class="subtitle">Banco Nacional de Vulnerabilidades</p>
+    </header>
+
+    <nav class="tabs">
+      <button class="tab active" data-tab="search">Buscar</button>
+      <button class="tab" data-tab="kev">KEV</button>
+      <button class="tab" data-tab="mitre">MITRE</button>
+      <button class="tab" data-tab="news">Noticias</button>
+    </nav>
+
+    <main class="content">
+      <section id="search" class="panel active">
+        <div class="search-box">
+          <input type="text" id="cve-input" placeholder="Digite o CVE (ex: CVE-2024-12345)">
+          <button id="search-btn" class="btn primary">Buscar</button>
+        </div>
+        <div id="search-result" class="result"></div>
+      </section>
+
+      <section id="kev" class="panel">
+        <div class="filters">
+          <input type="text" id="kev-vendor" placeholder="Fabricante (opcional)">
+          <select id="kev-ransomware">
+            <option value="">Todos</option>
+            <option value="known">Com Ransomware</option>
+            <option value="unknown">Sem Ransomware</option>
+          </select>
+          <button id="kev-search-btn" class="btn primary">Buscar</button>
+        </div>
+        <div id="kev-result" class="result"></div>
+        <div class="pagination" id="kev-pagination">
+          <button id="kev-prev" class="btn small" disabled>Anterior</button>
+          <span id="kev-page-num">1</span>
+          <button id="kev-next" class="btn small">Próximo</button>
+        </div>
+      </section>
+
+      <section id="mitre" class="panel">
+        <div class="filters">
+          <select id="mitre-type">
+            <option value="techniques">Tecnicas</option>
+            <option value="groups">Grupos</option>
+            <option value="mitigations">Mitigacoes</option>
+          </select>
+          <select id="mitre-matrix">
+            <option value="enterprise">Enterprise</option>
+            <option value="mobile">Mobile</option>
+            <option value="ics">ICS</option>
+          </select>
+          <button id="mitre-search-btn" class="btn primary">Carregar</button>
+        </div>
+        <div id="mitre-result" class="result"></div>
+        <div class="pagination" id="mitre-pagination">
+          <button id="mitre-prev" class="btn small" disabled>Anterior</button>
+          <span id="mitre-page-num">1</span>
+          <button id="mitre-next" class="btn small">Próximo</button>
+        </div>
+      </section>
+
+      <section id="news" class="panel">
+        <button id="news-refresh-btn" class="btn primary full-width">Atualizar Noticias</button>
+        <div id="news-result" class="result"></div>
+        <div class="pagination" id="news-pagination">
+          <button id="news-prev" class="btn small" disabled>Anterior</button>
+          <span id="news-page-num">1</span>
+          <button id="news-next" class="btn small">Próximo</button>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <a href="https://bnvd.org" target="_blank" rel="noopener">bnvd.org</a>
+      <span class="version">v6.0.0</span>
+    </footer>
+  </div>
+
+  <script src="js/popup.js" type="module"></script>
+</body>
+</html>

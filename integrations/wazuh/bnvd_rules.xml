@@ -1,0 +1,87 @@
+<!--
+BNVD Custom Rules for Wazuh
+Regras customizadas para integração BNVD com Wazuh
+
+Instalação:
+1. Copie este arquivo para /var/ossec/etc/rules/bnvd_rules.xml
+2. Reinicie o Wazuh Manager: systemctl restart wazuh-manager
+-->
+
+<group name="bnvd,">
+
+    <!-- Regra base para alertas BNVD -->
+    <rule id="100200" level="0">
+        <decoded_as>json</decoded_as>
+        <field name="integration">bnvd</field>
+        <description>BNVD Integration Alert</description>
+    </rule>
+
+    <!-- CVE encontrado no catálogo KEV - Crítico -->
+    <rule id="100201" level="14">
+        <if_sid>100200</if_sid>
+        <field name="bnvd.in_kev">true</field>
+        <description>BNVD: CVE $(bnvd.cve_id) está no catálogo KEV - Vulnerabilidade ativamente explorada!</description>
+        <options>alert_by_email</options>
+        <group>bnvd,kev,critical,</group>
+    </rule>
+
+    <!-- CVE KEV com uso conhecido em ransomware -->
+    <rule id="100202" level="15">
+        <if_sid>100201</if_sid>
+        <field name="bnvd.ransomware">Known</field>
+        <description>BNVD: CVE $(bnvd.cve_id) está associado a campanhas de RANSOMWARE conhecidas!</description>
+        <options>alert_by_email</options>
+        <group>bnvd,kev,ransomware,critical,</group>
+    </rule>
+
+    <!-- CVE KEV com severidade CRITICAL -->
+    <rule id="100203" level="14">
+        <if_sid>100201</if_sid>
+        <field name="bnvd.cvss_severity">CRITICAL</field>
+        <description>BNVD: CVE $(bnvd.cve_id) - Severidade CRÍTICA (CVSS: $(bnvd.cvss_score))</description>
+        <options>alert_by_email</options>
+        <group>bnvd,kev,critical,</group>
+    </rule>
+
+    <!-- CVE KEV com severidade HIGH -->
+    <rule id="100204" level="12">
+        <if_sid>100201</if_sid>
+        <field name="bnvd.cvss_severity">HIGH</field>
+        <description>BNVD: CVE $(bnvd.cve_id) - Severidade ALTA (CVSS: $(bnvd.cvss_score))</description>
+        <group>bnvd,kev,high,</group>
+    </rule>
+
+    <!-- Alerta de nova KEV adicionada -->
+    <rule id="100210" level="10">
+        <if_sid>100200</if_sid>
+        <field name="bnvd.event_type">new_kev</field>
+        <description>BNVD: Nova vulnerabilidade adicionada ao catálogo KEV - $(bnvd.cve_id)</description>
+        <group>bnvd,kev,new,</group>
+    </rule>
+
+    <!-- Alerta de nova notícia de cibersegurança -->
+    <rule id="100220" level="5">
+        <if_sid>100200</if_sid>
+        <field name="bnvd.event_type">news</field>
+        <description>BNVD: Nova notícia de cibersegurança - $(bnvd.title)</description>
+        <group>bnvd,news,</group>
+    </rule>
+
+    <!-- Alerta de técnica MITRE ATT&CK detectada -->
+    <rule id="100230" level="8">
+        <if_sid>100200</if_sid>
+        <field name="bnvd.mitre_technique">\.+</field>
+        <description>BNVD: Técnica MITRE ATT&CK detectada - $(bnvd.mitre_technique): $(bnvd.mitre_name)</description>
+        <group>bnvd,mitre,</group>
+    </rule>
+
+    <!-- Prazo KEV próximo do vencimento (7 dias) -->
+    <rule id="100240" level="12">
+        <if_sid>100201</if_sid>
+        <field name="bnvd.due_date_urgent">true</field>
+        <description>BNVD: URGENTE - Prazo KEV para $(bnvd.cve_id) vence em menos de 7 dias!</description>
+        <options>alert_by_email</options>
+        <group>bnvd,kev,urgent,</group>
+    </rule>
+
+</group>

@@ -1,0 +1,56 @@
+{
+  "manifest_version": 3,
+  "name": "BNVD Vulnerabilidades BR",
+  "short_name": "BNVD",
+  "version": "6.0.0",
+  "description": "Acesse rapidamente informações de vulnerabilidades, KEV, MITRE ATT&CK e notícias de cibersegurança do BNVD.org",
+  "author": "BNVD.org",
+  "homepage_url": "https://bnvd.org",
+
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "BNVD - Vulnerabilidades"
+  },
+
+  "permissions": [
+    "storage",
+    "activeTab",
+    "contextMenus"
+  ],
+
+  "host_permissions": [
+    "https://bnvd.org/*"
+  ],
+
+  "background": {
+    "scripts": ["js/background.js"]
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["js/content.js"],
+      "css": ["css/content.css"],
+      "run_at": "document_end"
+    }
+  ],
+
+  "options_page": "options.html",
+
+  "web_accessible_resources": [
+    {
+      "resources": ["css/*"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "bnvd@bnvd.org",
+      "strict_min_version": "109.0",
+      "data_collection_permissions": {
+        "required": ["none"]
+      }
+    }
+  }
+}

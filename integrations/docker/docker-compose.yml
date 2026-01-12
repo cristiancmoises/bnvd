@@ -1,0 +1,29 @@
+services:
+  bnvd-app:
+    image: azurejoga/bnvd:dev
+    container_name: bnvd-app
+    ports:
+      - "4448:4448"
+    env_file:
+      - .env
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:15
+    container_name: bnvd-postgres
+    environment:
+      POSTGRES_DB: bnvd-teste
+      POSTGRES_USER: bnvd-testando
+      POSTGRES_PASSWORD: bnvd-senha
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bnvd-testando -d bnvd-teste"]
+      interval: 10s
+      timeout: 5s
+
+volumes:
+  postgres_data:

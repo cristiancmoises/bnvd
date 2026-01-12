@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BNVD - Configuracoes</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+      color: #333;
+      background: #f5f5f5;
+      padding: 30px;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 8px;
+      padding: 30px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    h1 {
+      font-size: 24px;
+      color: #1a365d;
+      margin-bottom: 8px;
+    }
+    .subtitle {
+      color: #718096;
+      margin-bottom: 30px;
+    }
+    .setting {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 0;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .setting:last-child {
+      border-bottom: none;
+    }
+    .setting-info h3 {
+      font-size: 14px;
+      font-weight: 600;
+      color: #2d3748;
+      margin-bottom: 4px;
+    }
+    .setting-info p {
+      font-size: 12px;
+      color: #718096;
+    }
+    .toggle {
+      position: relative;
+      width: 50px;
+      height: 26px;
+    }
+    .toggle input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #cbd5e0;
+      transition: 0.3s;
+      border-radius: 26px;
+    }
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 20px;
+      width: 20px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: 0.3s;
+      border-radius: 50%;
+    }
+    input:checked + .toggle-slider {
+      background-color: #4299e1;
+    }
+    input:checked + .toggle-slider:before {
+      transform: translateX(24px);
+    }
+    .btn {
+      display: inline-block;
+      padding: 10px 20px;
+      background: #4299e1;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+    .btn:hover {
+      background: #3182ce;
+    }
+    .saved {
+      color: #48bb78;
+      font-size: 13px;
+      margin-left: 10px;
+      display: none;
+    }
+    .saved.show {
+      display: inline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>BNVD - Configuracoes</h1>
+    <p class="subtitle">Personalize a extensao do Banco Nacional de Vulnerabilidades</p>
+
+    <div class="setting">
+      <div class="setting-info">
+        <h3>Destacar CVEs nas paginas</h3>
+        <p>Transforma automaticamente CVE IDs em links para o BNVD</p>
+      </div>
+      <label class="toggle">
+        <input type="checkbox" id="highlightCVEs" checked>
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+
+    <div class="setting">
+      <div class="setting-info">
+        <h3>Notificacoes de KEV</h3>
+        <p>Mostra notificacao quando um CVE detectado esta no catalogo KEV</p>
+      </div>
+      <label class="toggle">
+        <input type="checkbox" id="kevNotifications" checked>
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+
+    <div class="setting">
+      <div class="setting-info">
+        <h3>Traducao automatica</h3>
+        <p>Preferir descricoes em portugues quando disponiveis</p>
+      </div>
+      <label class="toggle">
+        <input type="checkbox" id="translatePT" checked>
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+
+    <button class="btn" id="save">Salvar Configuracoes</button>
+    <span class="saved" id="saved">Salvo!</span>
+  </div>
+
+  <script>
+    const settings = ['highlightCVEs', 'kevNotifications', 'translatePT'];
+    
+    chrome.storage.sync.get(settings, (result) => {
+      settings.forEach(setting => {
+        const el = document.getElementById(setting);
+        if (el) {
+          el.checked = result[setting] !== false;
+        }
+      });
+    });
+    
+    document.getElementById('save').addEventListener('click', () => {
+      const values = {};
+      settings.forEach(setting => {
+        values[setting] = document.getElementById(setting).checked;
+      });
+      
+      chrome.storage.sync.set(values, () => {
+        const saved = document.getElementById('saved');
+        saved.classList.add('show');
+        setTimeout(() => saved.classList.remove('show'), 2000);
+      });
+    });
+  </script>
+</body>
+</html>

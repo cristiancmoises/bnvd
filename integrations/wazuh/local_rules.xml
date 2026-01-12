@@ -1,0 +1,31 @@
+<group name="local,syslog,sshd,">
+
+  <rule id="100001" level="5">
+    <if_sid>5716</if_sid>
+    <srcip>1.1.1.1</srcip>
+    <description>sshd: authentication failed from IP 1.1.1.1.</description>
+    <group>authentication_failed,pci_dss_10.2.4,pci_dss_10.2.5,</group>
+  </rule>
+</group>
+
+<group name="bnvd_intel,">
+
+  <rule id="90000" level="3">
+    <decoded_as>json</decoded_as>
+    <field name="integration">bnvd</field>
+    <description>BNVD: Inteligência de Vulnerabilidade para $(bnvd.cve_id)</description>
+  </rule>
+
+  <rule id="90001" level="10">
+    <if_sid>90000</if_sid>
+    <field name="bnvd.cvss_severity">HIGH|CRITICAL</field>
+    <description>BNVD: CVE $(bnvd.cve_id) com severidade $(bnvd.cvss_severity)</description>
+  </rule>
+
+  <rule id="90002" level="15">
+    <if_sid>90000</if_sid>
+    <field name="bnvd.in_kev">true</field>
+    <description>BNVD ALERTA: CVE $(bnvd.cve_id) EXPLOITED IN THE WILD (KEV)!</description>
+  </rule>
+
+</group>
